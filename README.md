@@ -1,5 +1,1 @@
-ps-manager
-===
-
-Inline-style: 
-![alt text](https://github.com/k-spit/ps-manager/tree/master/web/intro.png "Logo Title Text 1")
+![part 6](web/intro.png "Q is the best character in Star Trek")

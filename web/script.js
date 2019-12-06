@@ -4,7 +4,6 @@ function loadFiles() {
             url: "http://localhost:8080/getProcesses",
             success: function(result) {
                 let processes = JSON.parse(result)
-                let abc = JSON.parse(result)
                 $('#divpsbox').empty()
 
                 var i = processes.length
@@ -28,7 +27,6 @@ function loadFiles() {
                     $('#divpsbox').append('<td>' + element['pid'] + '</td>');
                     $('#divpsbox').append('<td>' + element['user'] + '</td>');
                     $('#divpsbox').append('<td>' + element['command'] + '</td>');
-                    $('#divpsbox').append('<td>' + '<button onclick="infoHandler(' + element['pid'] + ')">show pstree</button></td>');
                     $('#divpsbox').append('<td>' + '<button onclick="killHandler(' + element['pid'] + ')">kill process</button></td>');
                     var cmd = `'${element['command']}'`
                     $('#divpsbox').append('<td>' + '<button onclick="launchHandler(' + cmd + ')">try launch another instance</button></td>');
@@ -82,25 +80,6 @@ function commandHandler() {
         url: "http://localhost:8080/command",
         success: function() {
             // that.loadFiles();
-        }
-    })
-};
-
-function infoHandler(thisPID) {
-    let that = this;
-    $.ajax({
-        type: 'POST',
-        url: "http://localhost:8080/infoPid",
-        data: { pid: thisPID },
-        success: function(result) {
-            console.log(result)
-
-            // for loop result
-            // append every line to avoid one liner
-            $(function() {
-                $("#dialog").append('<p>' + result + '</p>');
-            });
-
         }
     })
 };

@@ -22,7 +22,6 @@ var switcher = "--sort -pcpu"
 func NewAPI() {
 	http.HandleFunc("/getProcesses", getProcessesHandler())
 	http.HandleFunc("/postPid", postPidProcessHandler())
-	http.HandleFunc("/infoPid", postPidInfoHandler())
 	http.HandleFunc("/postCommand", postCommandProcessHandler())
 
 	http.HandleFunc("/cpu", cpuHandler(cpu))
@@ -102,27 +101,6 @@ func postPidProcessHandler() http.HandlerFunc {
 
 		cmd := exec.Command("bash", "-c", "kill -9 "+slittedPid[1])
 		cmd.Run()
-	})
-}
-
-func postPidInfoHandler() http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		enableCors(&w)
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			log.Printf("Error reading body: %v", err)
-			http.Error(w, "can't read body", http.StatusBadRequest)
-			return
-		}
-		oldPid := string(body)
-		slittedPid := strings.Split(oldPid, "=")[1]
-
-		out, err := exec.Command("bash", "-c", "pstree "+slittedPid).Output()
-		if err != nil {
-			go log.Println("could not run os command!")
-			return
-		}
-		w.Write([]byte(string(out)))
 	})
 }
 
