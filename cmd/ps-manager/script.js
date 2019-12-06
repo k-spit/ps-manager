@@ -22,7 +22,7 @@ function loadFiles() {
                 $('#divpsbox').append('<th>' + 'launch' + '</th>');
                 $('#divpsbox').append('</tr>'); // end table head
                 processes.forEach(element => {
-                    $('#divpsbox').append('<tr>');
+                    $('#divpsbox').append('<tr>'); // loop start table body
                     $('#divpsbox').append('<td>' + i + '</td>');
                     $('#divpsbox').append('<td>' + element['cpu'] + '</td>');
                     $('#divpsbox').append('<td>' + element['pid'] + '</td>');
@@ -35,7 +35,7 @@ function loadFiles() {
                     i--
                 });
 
-                $('#divpsbox').append('</table>');
+                $('#divpsbox').append('</table>'); // loop end table
             }
         });
     }, 2000);

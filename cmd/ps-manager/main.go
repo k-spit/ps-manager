@@ -1,13 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 	"ps-manager/models"
 	"strings"
@@ -132,39 +130,22 @@ func getProcessesHandler() http.HandlerFunc {
 			go log.Println("could not run os command!")
 			return
 		}
-		file, err := os.Create("tmp")
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			file.WriteString(string(out))
-		}
-		file.Close()
-
-		file, err = os.Open("tmp")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer file.Close()
-
-		scanner := bufio.NewScanner(file)
-
+		// convert byte[] to string
+		pscommand := string(out[:])
+		pscommandSlice := strings.Split(pscommand, "\n")
 		processes := []models.Process{}
 
-		for scanner.Scan() {
-			tmp := scanner.Text()
-			s := strings.Fields(tmp)
+		for _, ps := range pscommandSlice {
+			s := strings.Fields(ps)
+			if len(s) >= 4 {
+				process := new(models.Process)
+				process.CPU = s[0]
+				process.Pid = s[1]
+				process.User = s[2]
+				process.Command = s[3]
 
-			process := new(models.Process)
-			process.CPU = s[0]
-			process.Pid = s[1]
-			process.User = s[2]
-			process.Command = s[3]
-
-			processes = append(processes, *process)
-		}
-
-		if err := scanner.Err(); err != nil {
-			log.Fatal(err)
+				processes = append(processes, *process)
+			}
 		}
 
 		urlsJSON, err := json.Marshal(processes)
