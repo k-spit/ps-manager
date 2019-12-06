@@ -13,15 +13,80 @@ import (
 	"strings"
 )
 
-var newPath = ""
+var cpu = 0
+var pid = 0
+var user = 0
+var command = 0
+var switcher = "--sort -pcpu"
 
 func main() {
+
 	http.HandleFunc("/getProcesses", getProcessesHandler())
 	http.HandleFunc("/postPid", postPidProcessHandler())
 	http.HandleFunc("/postCommand", postCommandProcessHandler())
 
+	http.HandleFunc("/cpu", cpuHandler(cpu))
+	http.HandleFunc("/pid", pidHandler(cpu))
+	http.HandleFunc("/user", userHandler(cpu))
+	http.HandleFunc("/command", commandHandler(cpu))
+
 	//openbrowser("index.html")
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func cpuHandler(cpu int) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+
+		if odd(cpu) {
+			switcher = "--sort -pcpu"
+		}
+		if even(cpu) {
+			switcher = "--sort +pcpu"
+		}
+		cpu++
+	})
+}
+
+func pidHandler(pid int) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+
+		if odd(pid) {
+			switcher = "--sort -pid"
+		}
+		if even(pid) {
+			switcher = "--sort +pid"
+		}
+		pid++
+	})
+}
+
+func userHandler(user int) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+
+		if odd(user) {
+			switcher = "--sort -user"
+		}
+		if even(user) {
+			switcher = "--sort +user"
+		}
+		user++
+	})
+}
+func commandHandler(command int) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+
+		if odd(command) {
+			switcher = "--sort -command"
+		}
+		if even(command) {
+			switcher = "--sort +command"
+		}
+		command++
+	})
 }
 
 func postPidProcessHandler() http.HandlerFunc {
@@ -62,8 +127,7 @@ func getProcessesHandler() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 
-		//out, err := exec.Command("bash", "-c", "ps -eo pcpu,pid,user,command --no-headers | sort -t. -nk1,2 -k4,4 -r").Output()
-		out, err := exec.Command("bash", "-c", "ps -eo pcpu,pid,user,command --no-headers --sort -pid").Output()
+		out, err := exec.Command("bash", "-c", "ps -eo pcpu,pid,user,command --no-headers "+switcher).Output()
 		if err != nil {
 			go log.Println("could not run os command!")
 			return
@@ -137,4 +201,12 @@ func openbrowser(url string) {
 	// 	log.Fatal(err)
 	// }
 	fmt.Println("browser open")
+}
+
+func even(number int) bool {
+	return number%2 == 0
+}
+
+func odd(number int) bool {
+	return !even(number)
 }

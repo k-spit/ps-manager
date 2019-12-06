@@ -1,5 +1,3 @@
-var pid = 1
-
 function loadFiles() {
     setInterval(() => {
         $.ajax({
@@ -16,10 +14,10 @@ function loadFiles() {
                 $('#divpsbox').append('<table>');
                 $('#divpsbox').append('<tr>'); // start table head
                 $('#divpsbox').append('<th>' + 'index' + '</th>');
-                $('#divpsbox').append('<th>' + 'cpu' + '</th>');
-                $('#divpsbox').append('<th>' + 'pid' + '</th>');
-                $('#divpsbox').append('<th>' + 'user' + '</th>');
-                $('#divpsbox').append('<th>' + 'command' + '</th>');
+                $('#divpsbox').append('<th><button onclick="cpuHandler()">' + 'cpu' + '</button></th>');
+                $('#divpsbox').append('<th><button onclick="pidHandler()">' + 'pid' + '</button></th>');
+                $('#divpsbox').append('<th><button onclick="userHandler()">' + 'user' + '</button></th>');
+                $('#divpsbox').append('<th><button onclick="commandHandler()">' + 'command' + '</button></th>');
                 $('#divpsbox').append('<th>' + 'kill' + '</th>');
                 $('#divpsbox').append('<th>' + 'launch' + '</th>');
                 $('#divpsbox').append('</tr>'); // end table head
@@ -43,6 +41,50 @@ function loadFiles() {
     }, 2000);
 }
 
+function cpuHandler() {
+    let that = this;
+    $.ajax({
+        type: 'POST',
+        url: "http://localhost:8080/cpu",
+        success: function() {
+            // that.loadFiles();
+        }
+    })
+};
+
+function pidHandler() {
+    let that = this;
+    $.ajax({
+        type: 'POST',
+        url: "http://localhost:8080/pid",
+        success: function() {
+            // that.loadFiles();
+        }
+    })
+};
+
+function userHandler() {
+    let that = this;
+    $.ajax({
+        type: 'POST',
+        url: "http://localhost:8080/user",
+        success: function() {
+            // that.loadFiles();
+        }
+    })
+};
+
+function commandHandler() {
+    let that = this;
+    $.ajax({
+        type: 'POST',
+        url: "http://localhost:8080/command",
+        success: function() {
+            // that.loadFiles();
+        }
+    })
+};
+
 function killHandler(thisPID) {
     let that = this;
     $.ajax({
@@ -50,7 +92,7 @@ function killHandler(thisPID) {
         url: "http://localhost:8080/postPid",
         data: { pid: thisPID },
         success: function() {
-            that.loadFiles();
+            // that.loadFiles();
         }
     })
 };
@@ -62,7 +104,7 @@ function launchHandler(thisCOMMAND) {
         url: "http://localhost:8080/postCommand",
         data: { command: thisCOMMAND },
         success: function() {
-            that.loadFiles();
+            // that.loadFiles();
         }
     })
 }
